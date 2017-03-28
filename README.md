@@ -30,7 +30,7 @@ session = Maze.session
 
 You can modify the session to allow for a more personalized game or to make the lesson more advanced.
 
-~~:skip_intro~~ - 
+`:skip_intro` - 
 
 ## License
 
