@@ -7,6 +7,8 @@ module CheckingMethods
     current_square_on_map == target
   end
 
+private
+
   def current_square_on_map
     map[current_square[0]][current_square[1]]
   end

@@ -22,8 +22,8 @@ class Maze
                 :presenting_map
 
   def initialize(options_hash={})
-    extend UpdateMap unless options_hash[:update_map] == false
     extend PlaceBlocks unless options_hash[:place_blocks] == false
+    extend UpdateMap unless options_hash[:update_map] == false
     extend CheckingMethods unless options_hash[:checking_methods] == false
     extend MoveMethods unless options_hash[:move_methods] == false
     @character = options_hash[:character] || "🚶 "
