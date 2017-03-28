@@ -36,9 +36,10 @@ You can modify the session to allow for a more personalized game or to make the 
 
 #### Add Challenge
 
-`:move_methods` - setting to `false` will require you to write the following methods to alter the `current_square` attribute.
+- `:move_methods` - setting to `false` will require you to write the following methods to alter the `current_square` attribute.
   - `Maze#move_up`, `Maze#move_down`, `Maze#move_left`, `Maze#move_right`
-`:checking_methods` - setting to `false` will require you to write the following methods to 
+
+- `:checking_methods` - setting to `false` will require you to write the following methods to 
 
 ## License
 
