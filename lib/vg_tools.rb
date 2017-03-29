@@ -10,6 +10,8 @@ end
 
 
 class Maze
+  include UpdateMap
+  include PlaceBlocks
 
   attr_accessor :character, 
                 :not_finished, 
@@ -22,19 +24,17 @@ class Maze
                 :presenting_map
 
   def initialize(options_hash={})
-    extend PlaceBlocks unless options_hash[:place_blocks] == false
-    extend UpdateMap unless options_hash[:update_map] == false
     extend CheckingMethods unless options_hash[:checking_methods] == false
     extend MoveMethods unless options_hash[:move_methods] == false
     @character = options_hash[:character] || "🚶 "
     @target = options_hash[:target] || "🍪 "
-    @current_square = options_hash[:starting_square] || [1,1]
-    @target_location = options_hash[:target_location] || [7,11]
+    @current_square = options_hash[:starting_player_location] ? check_coordinates("player", options_hash[:starting_player_location],options_hash[:map]) : [1,1]
+    @target_location = options_hash[:target_location] ? check_coordinates("target", options_hash[:target_location],options_hash[:map]) : [7,11]
     @map = build_map(options_hash[:map])
     add_many_blocks(options_hash[:blocks],false) if options_hash[:blocks]
     @not_finished = true
-    @error_message = false
-    @winner = false
+    @error_message = @winner = false
+    @settings = options_hash
   end
 
   def self.session(options_hash={})
@@ -73,7 +73,19 @@ oview
 
   def play
     # reset_screen; 
+    start_time = Time.now.to_f
     yield(self)
+    end_time = Time.now.to_f
+    time_difference = (end_time - start_time).round(3)
+    # minutes = time_difference / 60
+    # seconds = time_difference % 60
+    # total_time = ""
+    # total_time += "#{minutes} Minute" if minutes > 0
+    # total_time += "s" if minutes > 1
+    # total_time += ", " if minutes > 0 && seconds > 0
+    # total_time += "#{seconds} Second" if seconds > 0
+    # total_time += "s" if seconds > 1
+    puts "Total Time: #{time_difference}"
   end
 
 private
@@ -81,27 +93,69 @@ private
   def build_map(map_options)
     if map_options && map_options[:rows] > 0 && map_options[:cols] > 0
       column_count = map_options[:cols]
-      puts column_count
       row_count = map_options[:rows]
-      puts row_count
-      map_array = []
-      map_array << ["╔═"] + ["══"] * column_count + ["╗"]
-      row_count.times { map_array << ["║ "] + ["¤ "] * column_count + ["║"] }
-      map_array << ["╚═"] + ["══"] * column_count + ["╝"]
+      if current_square[0] <= row_count && current_square[1] <= column_count && target_location[0] <= row_count && target_location[1] <= column_count
+        map_array = []
+        map_array << ["╔═"] + ["══"] * column_count + ["╗"]
+        row_count.times { map_array << ["║ "] + ["¤ "] * column_count + ["║"] }
+        map_array << ["╚═"] + ["══"] * column_count + ["╝"]
+      else
+        reset_screen
+        puts <<-dmap_problem
+  There was a problem!
+
+  Map must be big enough to include show character and target.
+        dmap_problem
+        exit
+      end
     else
-      map_array = [["╔═","══","══","══","══","══","══","══","══","══","══","══","══","╗"],
-                   ["║ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","¤ ","║"],
-                   ["║ ","¤ ","▒ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
-                   ["║ ","¤ ","▒ ","▒ ","▒ ","¤ ","▒ ","▒ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
-                   ["║ ","¤ ","¤ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
-                   ["║ ","¤ ","▒ ","¤ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","║"],
-                   ["║ ","¤ ","▒ ","¤ ","▒ ","▒ ","▒ ","▒ ","▒ ","¤ ","▒ ","▒ ","¤ ","║"],
-                   ["║ ","¤ ","▒ ","¤ ","¤ ","¤ ","¤ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","║"],
-                   ["╚═","══","══","══","══","══","══","══","══","══","══","══","══","╝"]]
+        map_array = [["╔═","══","══","══","══","══","══","══","══","══","══","══","══","╗"],
+                     ["║ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","¤ ","║"],
+                     ["║ ","¤ ","▒ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
+                     ["║ ","¤ ","▒ ","▒ ","▒ ","¤ ","▒ ","▒ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
+                     ["║ ","¤ ","¤ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","▒ ","¤ ","║"],
+                     ["║ ","¤ ","▒ ","¤ ","▒ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","▒ ","¤ ","║"],
+                     ["║ ","¤ ","▒ ","¤ ","▒ ","▒ ","▒ ","▒ ","▒ ","¤ ","▒ ","▒ ","¤ ","║"],
+                     ["║ ","¤ ","▒ ","¤ ","¤ ","¤ ","¤ ","¤ ","¤ ","¤ ","▒ ","¤ ","¤ ","║"],
+                     ["╚═","══","══","══","══","══","══","══","══","══","══","══","══","╝"]]
+
      end
-     # p target_location
      map_array[target_location[0]][target_location[1]] = target
      map_array
+  end
+
+  def check_coordinates(subject, coord_array, map_options)
+    if map_options && map_options[:rows] > 0 && map_options[:cols] > 0
+        if map_options[:rows] >= coord_array[0] && coord_array[0] > 0 && map_options[:cols] >= coord_array[1] && coord_array[1] > 0
+          coord_array
+        else
+          reset_screen
+          puts <<-cmap_problem
+    There was a problem!
+
+    You are trying to place your #{subject} on row #{coord_array[0]}, column #{coord_array[1]}
+    Map size is currently: #{map_options[:rows]} Rows x #{map_options[:cols]} Columns
+
+    Please adjust your settings and try again
+          cmap_problem
+          exit
+        end
+    else
+      if 7 >= coord_array[0] && coord_array[0] > 0 && 12 >= coord_array[1] && coord_array[1] > 0
+          coord_array
+        else
+          reset_screen
+          puts <<-dmap_problem
+    There was a problem!
+
+    You are trying to place your #{subject} on row #{coord_array[0]}, column #{coord_array[1]}
+    The default map size is: 7 Rows x 12 Columns
+
+    Please adjust your settings and try again
+          dmap_problem
+          exit
+        end
+    end
   end
 end
 

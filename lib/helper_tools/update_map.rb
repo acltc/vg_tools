@@ -8,12 +8,23 @@ module UpdateMap
   end
 
 
-  def place_character
-    presenting_map[current_square[0]][current_square[1]] = character
+  def place_character(alt_map=nil)
+    if alt_map
+      alt_map[current_square[0]][current_square[1]] = character
+    else
+      presenting_map[current_square[0]][current_square[1]] = character
+    end
   end
 
   def print_map(map_array=nil)
     (map_array || presenting_map).each { |row| puts row.join("") }
+  end
+
+  def update_and_print
+    reset_screen
+    reset_map
+    place_character
+    print_map 
   end
 
 private
