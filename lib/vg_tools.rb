@@ -5,7 +5,7 @@ require 'helper_tools/place_blocks'
 require 'helper_tools/checking_methods'
 
 class String
-  {red: 31, green: 32, yellow: 33, purple: 34, pink: 35, blue: 36, white: 37, black: 30}.each { |color, key| define_method("#{color}") { "\e[#{key}m#{self}\e[0m" }}
+  {red: 31, green: 32, yellow: 33, blue: 34, purple: 35, teal: 36, white: 37, black: 30}.each { |color, key| define_method("#{color}") { "\e[#{key}m#{self}\e[0m" }}
 end
 
 

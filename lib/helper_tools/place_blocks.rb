@@ -1,10 +1,10 @@
 module PlaceBlocks
 
-  def add_block(row,col,want_print=true,options={color: :blue})
+  def add_block(row,col,want_print=true,options={color: :teal})
     block_placement("▒ ",row,col,want_print,options)
   end
 
-  def remove_block(row,col,want_print=true,options={color: :blue})
+  def remove_block(row,col,want_print=true,options={color: :teal})
     block_placement("¤ ",row,col,want_print,options)
   end
 
@@ -77,10 +77,10 @@ private
   end
 
   def many_blocks_placement(character, block_array, want_print)
-    block_array.each { |block| block_placement("▒ ",block[0],block[1],false,{color: :blue})}
+    block_array.each { |block| block_placement("▒ ",block[0],block[1],false,{color: :teal})}
     if want_print
       show_map = dup_map
-      block_array.each { |block| block_placement("▒ ",block[0],block[1], false, alt_map: show_map, color: :blue)}
+      block_array.each { |block| block_placement("▒ ",block[0],block[1], false, alt_map: show_map, color: :teal)}
       print_map(show_map)
     end
   end
