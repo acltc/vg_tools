@@ -20,11 +20,46 @@ module PlaceBlocks
   def print_settings
     @settings[:starting_player_location] = current_square
     @settings[:blocks] = []
-    map.each_with_index do |row|
-      row.each_with_index do |col|
-          
+    map.each_with_index do |row, row_i|
+      row.each_with_index do |col, col_i|
+        if col.include?("▒")
+          @settings[:blocks] << [row_i,col_i]
+        end
       end
     end
+
+    puts ""
+    puts ""
+    puts <<-set_report
+             Settings Report
+------------------------------------------
+
+        PASTE EVERYTHING BELOW INTO 
+           THE SESSIONS OPTIONS
+vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+
+{
+    set_report
+    @settings.each.with_index do |pair, index|
+      if pair[0] == :map
+        puts "    map: {"
+        puts "          rows: #{pair[1][:rows]},"
+        puts "          cols: #{pair[1][:cols]}"
+        line = "          }"
+        line += "," if index != @settings.length - 1
+        puts line
+      else
+        line = "    #{pair[0]}: #{pair[1]}"
+        line += "," if index != @settings.length - 1
+        puts line
+      end
+    end
+    puts "}"
+    puts ""
+    puts ""
+    puts "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+    true
   end
 
 private
