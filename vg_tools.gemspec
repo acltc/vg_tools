@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = "To help teach programing terminal videogames in ruby"
   spec.description   = "This gem was developed to provide tools for beginner ruby students making terminal based videogames and cultivating a taste for programming in the ruby language."
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/acltc/vg_tools"
   spec.license       = "MIT"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
