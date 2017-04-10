@@ -26,8 +26,8 @@ class Maze
   def initialize(options_hash={})
     extend CheckingMethods unless options_hash[:checking_methods] == false
     extend MoveMethods unless options_hash[:move_methods] == false
-    @character = options_hash[:character] || "$ ".pink
-    @target = options_hash[:target] || "@ ".pink
+    @character = options_hash[:character] || "$ ".red
+    @target = options_hash[:target] || "@ ".red
     @current_square = options_hash[:starting_player_location] ? check_coordinates("player", options_hash[:starting_player_location],options_hash[:map]) : [1,1]
     @target_location = options_hash[:target_location] ? check_coordinates("target", options_hash[:target_location],options_hash[:map]) : [7,11]
     @map = build_map(options_hash[:map])
